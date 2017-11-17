@@ -1,15 +1,22 @@
 package com.example.anna.cerebro;
 
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
+
+import java.security.Policy;
 
 public class MainActivity extends AppCompatActivity {
+
+     static String TAG ="Main activity" ;
+    Camera camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +25,33 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        ToggleButton btnToggle = (ToggleButton)findViewById(R.id.btnToggle);
+
+        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                camera = Camera.open(); // attempt to get a Camera instance
+
+                if (isChecked) {
+                    Log.i(TAG,"enabled button");
+                    camera = Camera.open();
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    camera.setParameters(parameters);
+                    camera.startPreview();
+                } else {
+                    Log.i(TAG,"disabled button");
+                    camera = Camera.open();
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    camera.setParameters(parameters);
+                    camera.stopPreview();
+                    camera.release();
+                }
             }
         });
+
+
     }
 
     @Override
