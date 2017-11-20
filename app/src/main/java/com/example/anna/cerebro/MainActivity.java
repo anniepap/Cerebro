@@ -1,21 +1,24 @@
-package com.example.anna.cerebro;
+package com.example.user.cerebro;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
-import java.security.Policy;
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
 
-     static String TAG ="Main activity" ;
+    static String TAG ="Main activity" ;
     Camera camera;
 
     @Override
@@ -26,32 +29,68 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ToggleButton btnToggle = (ToggleButton)findViewById(R.id.btnToggle);
+        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
 
         btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                camera = Camera.open(); // attempt to get a Camera instance
+
+                /*try {
+                    releaseCameraAndPreview();
+                    camera = Camera.open();
+                } catch (Exception e) {
+                    Log.e(getString(R.string.app_name), "failed to open Camera");
+                    e.printStackTrace();
+                }*/
+
 
                 if (isChecked) {
-                    Log.i(TAG,"enabled button");
+                    //Log.i(TAG,"enabled button");
                     camera = Camera.open();
                     Camera.Parameters parameters = camera.getParameters();
                     parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     camera.setParameters(parameters);
                     camera.startPreview();
+                    mp.start();
+
                 } else {
-                    Log.i(TAG,"disabled button");
+                    //Log.i(TAG,"disabled button");
                     camera = Camera.open();
                     Camera.Parameters parameters = camera.getParameters();
                     parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     camera.setParameters(parameters);
                     camera.stopPreview();
                     camera.release();
+
+                    mp.stop();
+                    try {
+                        mp.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        builder.setTitle("Exit Or Not");
+        builder.setMessage("Do you really want to exit ? ");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+;
+                finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -72,7 +111,16 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_exit) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

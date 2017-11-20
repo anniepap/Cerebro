@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Cerebro</string>
     <string name="action_settings">Settings</string>
-    <string name="toggleButton">ToggleButton</string>
-    <string name="btnToggle">On</string>
+    <string name="btnToggle">On/Off</string>
+    <string name="action_exit">Exit</string>
 </resources>
