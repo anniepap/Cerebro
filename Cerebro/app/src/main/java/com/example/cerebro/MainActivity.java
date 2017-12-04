@@ -137,11 +137,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        // on stop release the camera
-        if (camera != null) {
-            camera.release();
-            camera = null;
-        }
         if (this.isFinishing()) {
             mp.stop();
         }
