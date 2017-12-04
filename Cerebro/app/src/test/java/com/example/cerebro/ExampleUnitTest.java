@@ -1,4 +1,4 @@
-package com.example.anna.cerebro;
+package com.example.cerebro;
 
 import org.junit.Test;
 

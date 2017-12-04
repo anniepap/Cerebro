@@ -1,4 +1,4 @@
-package com.example.anna.cerebro;
+package com.example.cerebro;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.anna.cerebro", appContext.getPackageName());
+        assertEquals("com.example.cerebro", appContext.getPackageName());
     }
 }
