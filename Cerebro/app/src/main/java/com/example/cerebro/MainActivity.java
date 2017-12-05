@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        ToggleButton btnToggle = (ToggleButton)findViewById(R.id.btnToggle);
+        final ToggleButton btnToggle = (ToggleButton)findViewById(R.id.btnToggle);
         mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
         mp.setLooping(true);
         getCamera();
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     Log.i("main","neither");
                 }
+                // btnToggle.setChecked(isFlashOn);
             }
         });
 
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     turnOnFlash();
-
                 } else {
                     turnOffFlash();
                 }
@@ -146,13 +146,13 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         // on starting the app get the camera params
-     //   getCamera();
-    //}
+        getCamera();
+    }
 
     @Override
     protected void onStop() {
