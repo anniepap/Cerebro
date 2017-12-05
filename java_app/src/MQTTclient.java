@@ -32,7 +32,7 @@ public class MQTTclient implements MqttCallback{
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println("-------------------------------------------------");
         System.out.println("| Topic:" + topic);
-        //System.out.println("| Message: " + new String(message.getPayload()));
+        System.out.println("| Message: " + new String(message.getPayload()));
         System.out.println("-------------------------------------------------");
     }
 
@@ -45,8 +45,6 @@ public class MQTTclient implements MqttCallback{
         String clientId = "Cerebro1";
         String broker = "tcp://localhost:1883";
         MemoryPersistence persistence = new MemoryPersistence();
-
-
 
         try {
             myClient = new MqttClient(broker, clientId, persistence);
@@ -78,7 +76,7 @@ public class MQTTclient implements MqttCallback{
 
             try {
                 myClient.publish(topic, message);
-                System.out.println("Message published" +topic);
+                System.out.println("Topic: " +topic);
                 Thread.sleep(30000);
                 message = new MqttMessage(content1.getBytes());
                 myClient.publish(topic, message);

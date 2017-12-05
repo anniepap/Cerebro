@@ -19,10 +19,9 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
     private Camera camera;
-    private boolean isFlashOn;
+    private boolean isFlashOn = false;
     Parameters params;
     MediaPlayer mp;
-    static String TAG ="Main activity" ;
     MQTTclient cl;
 
     @Override
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         mp.setLooping(true);
         getCamera();
 
-        cl=new MQTTclient();
+        cl = new MQTTclient();
         cl.runClient();
 
         cl.setListener(new MQTTclient.ChangeListener() {
@@ -58,9 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
 
         // Switch button click event to toggle flash on/off
         btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -150,13 +146,13 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
 
         // on starting the app get the camera params
-        getCamera();
-    }
+     //   getCamera();
+    //}
 
     @Override
     protected void onStop() {

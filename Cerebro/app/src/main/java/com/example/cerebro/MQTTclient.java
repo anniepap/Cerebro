@@ -68,7 +68,6 @@ public class MQTTclient implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost!");
-
     }
 
     @Override
@@ -88,7 +87,6 @@ public class MQTTclient implements MqttCallback {
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
         // TODO Auto-generated method stub
-
     }
 
     public void disconnect() {
