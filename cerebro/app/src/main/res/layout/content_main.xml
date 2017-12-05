@@ -12,10 +12,16 @@
         android:id="@+id/btnToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:textOn="Turn Off"
         android:textOff="Turn On"
         android:checked="false"
-        android:text="@string/btnToggle"
+
+        android:textColor="@drawable/buttontext"
+        android:textSize="18sp"
+
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#232927"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
