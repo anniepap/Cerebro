@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFlashOn;
     Parameters params;
     MediaPlayer mp;
+    static String TAG ="Main activity" ;
+    MQTTclient cl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,29 @@ public class MainActivity extends AppCompatActivity {
         mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
         mp.setLooping(true);
         getCamera();
+
+        cl=new MQTTclient();
+        cl.runClient();
+
+        cl.setListener(new MQTTclient.ChangeListener() {
+            @Override
+            public void onChange() {
+                if(cl.getMessage_string().equals("turn On")){
+                    Log.i("main","TURNED ON");
+                    turnOnFlash();
+                }
+                else if(cl.getMessage_string().equals("turn Off")){
+                    Log.i("main","TURNED OFF");
+                    turnOffFlash();
+                }
+                else{
+                    Log.i("main","neither");
+                }
+            }
+        });
+
+
+
 
         // Switch button click event to toggle flash on/off
         btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

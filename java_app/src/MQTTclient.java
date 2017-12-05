@@ -17,8 +17,6 @@ public class MQTTclient implements MqttCallback{
     static final Boolean subscriber = true;
     static final Boolean publisher = true;
 
-    public String broker = "tcp://localhost:1883";
-
     @Override
     public void connectionLost(Throwable t) {
         System.out.println("Connection lost!");
@@ -34,7 +32,7 @@ public class MQTTclient implements MqttCallback{
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println("-------------------------------------------------");
         System.out.println("| Topic:" + topic);
-        System.out.println("| Message: " + new String(message.getPayload()));
+        //System.out.println("| Message: " + new String(message.getPayload()));
         System.out.println("-------------------------------------------------");
     }
 
@@ -44,7 +42,8 @@ public class MQTTclient implements MqttCallback{
     }
 
     public void runClient()  {
-        String clientId = "Cerebro";
+        String clientId = "Cerebro1";
+        String broker = "tcp://localhost:1883";
         MemoryPersistence persistence = new MemoryPersistence();
 
 
@@ -55,36 +54,35 @@ public class MQTTclient implements MqttCallback{
             connOpts.setCleanSession(true);
 
             myClient.setCallback(this);
-
-            System.out.println("Connecting to broker: "+broker);
             myClient.connect(connOpts);
-            System.out.println("Connected");
-
         }
         catch (MqttException me){
             me.printStackTrace();
         }
 
-        String topic = "Instructions";
+        String topic = "instructions";
 
         if (publisher){
-            String content = "Test message turn On!";
+            String content = "turn On";
+            String content1= "turn Off";
+            String content2= "quit";
             int qos = 2;
 
             System.out.println("Publishing message: "+content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
-            int i;
 
             //Scanner scanner = new Scanner(System.in);
             //String line = scanner.nextLine();
             //MqttMessage message = new MqttMessage(line.getBytes());
-            message.setQos(qos);
 
-            //for (i=0;i<20;i++) {
             try {
                 myClient.publish(topic, message);
-                System.out.println("Message published");
+                System.out.println("Message published" +topic);
+                Thread.sleep(30000);
+                message = new MqttMessage(content1.getBytes());
+                myClient.publish(topic, message);
+
             } catch (Exception me) {
                 System.out.println("msg " + me.getMessage());
                 System.out.println("loc " + me.getLocalizedMessage());
@@ -92,7 +90,6 @@ public class MQTTclient implements MqttCallback{
                 System.out.println("excep " + me);
                 me.printStackTrace();
             }
-            //}
         }
         /*if (subscriber) {
             try {
