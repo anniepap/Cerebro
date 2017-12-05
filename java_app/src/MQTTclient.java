@@ -66,15 +66,10 @@ public class MQTTclient implements MqttCallback{
             String content2= "quit";
             int qos = 2;
 
-            System.out.println("Publishing message: "+content);
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setQos(qos);
+            System.out.println("Publishing on topic : "+topic);
+            MqttMessage message ;
 
-            //Scanner scanner = new Scanner(System.in);
-            //String line = scanner.nextLine();
-            //MqttMessage message = new MqttMessage(line.getBytes());
-
-            try {
+            /*try {
                 myClient.publish(topic, message);
                 System.out.println("Topic: " +topic);
                 Thread.sleep(30000);
@@ -87,7 +82,30 @@ public class MQTTclient implements MqttCallback{
                 System.out.println("cause " + me.getCause());
                 System.out.println("excep " + me);
                 me.printStackTrace();
+            }*/
+            Scanner scanner = new Scanner(System.in);
+            String line = scanner.nextLine();
+            while(!line.equals("finish")){
+                message = new MqttMessage(line.getBytes());
+                message.setQos(qos);
+                try {
+                    myClient.publish(topic, message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+                line = scanner.nextLine();
             }
+            System.out.println("Finished!");
+            try {
+                // wait to ensure subscribed messages are delivered
+                if (subscriber) {
+                    Thread.sleep(5000);
+                }
+                myClient.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         /*if (subscriber) {
             try {
