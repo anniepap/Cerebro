@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">&#160;&#160;Cerebro</string>
-    <string name="action_settings">Settings</string>
     <string name="btnToggle">On/Off</string>
+    <string name="action_settings">Connection Settings</string>
+    <string name="action_frequency">Set Frequency</string>
     <string name="action_exit">Exit</string>
+    <string name="ip_input">IP address</string>
+    <string name="port_input">Port</string>
 </resources>

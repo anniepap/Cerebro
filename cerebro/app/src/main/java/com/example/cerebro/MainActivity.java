@@ -3,9 +3,17 @@ package com.example.cerebro;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.content.Intent;
 import android.app.AlertDialog;
@@ -20,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Camera camera;
     private boolean isFlashOn = false;
+    private String IPport = "";
+    private MenuItem item;
     Parameters params;
     MediaPlayer mp;
     MQTTclient cl;
@@ -28,19 +38,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        final ToggleButton btnToggle = (ToggleButton)findViewById(R.id.btnToggle);
+        final ToggleButton btnToggle = findViewById(R.id.btnToggle);
         mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
         mp.setLooping(true);
         getCamera();
 
         cl = new MQTTclient();
         cl.runClient();
-
         cl.setListener(new MQTTclient.ChangeListener() {
             @Override
             public void onChange() {
@@ -67,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     turnOffFlash();
                 }
+                // btnToggle.setChecked(isFlashOn);
             }
         });
     }
@@ -121,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Exit or Not");
+        builder.setTitle("Exit");
         builder.setMessage("Do you really want to exit? ");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -149,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         // on starting the app get the camera params
         getCamera();
     }
@@ -157,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
         if (this.isFinishing()) {
             mp.stop();
         }
@@ -177,17 +185,74 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Connection Settings");
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            View view = View.inflate(this, R.layout.settings_dialog, layout);
+
+            TextView IPview = view.findViewById(R.id.ip_input);
+            IPview.setText("IP address:", TextView.BufferType.EDITABLE);
+            final EditText IP = view.findViewById(R.id.IP);
+
+            TextView portView = view.findViewById(R.id.port_input);
+            portView.setText("Port:", TextView.BufferType.EDITABLE);
+            final EditText port = view.findViewById(R.id.port);
+
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    IPport = "tcp://" + IP.getText().toString();// + ":" + port.getText().toString();
+                    Log.i("IPportInput", IPport);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+            builder.setView(layout);
+            builder.show();
         }
+
+        if (id == R.id.action_frequency) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Set Frequency");
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.frequency_dialog, null);
+            builder.setView(dialogView);
+
+            final NumberPicker numberPicker = dialogView.findViewById(R.id.dialog_number_picker);
+            numberPicker.setMinValue(1);
+            numberPicker.setMaxValue(10);
+            numberPicker.setWrapSelectorWheel(true);
+            numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker numberPicker, int id, int i) {
+                    Log.d("numberPicker", "onValueChange: ");
+                }
+            });
+            TextView IPview = dialogView.findViewById(R.id.sec);
+            IPview.setText("sec", TextView.BufferType.EDITABLE);
+
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Log.i("frequencyInput", "" + numberPicker.getValue());
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
         if (id == R.id.action_exit) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
