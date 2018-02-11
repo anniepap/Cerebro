@@ -8,23 +8,44 @@
     tools:context="com.example.cerebro.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ToggleButton
-        android:id="@+id/btnToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <!--<ToggleButton-->
+        <!--android:id="@+id/btnToggle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
 
-        android:textOn="Turn Off"
-        android:textOff="Turn On"
-        android:checked="false"
+        <!--android:textOn="Turn Off"-->
+        <!--android:textOff="Turn On"-->
+        <!--android:checked="false"-->
 
-        android:textColor="@drawable/buttontext"
-        android:textSize="18sp"
+        <!--android:textColor="@drawable/buttontext"-->
+        <!--android:textSize="18sp"-->
 
-        android:background="@drawable/buttonshape"
-        android:shadowColor="#232927"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <!--android:background="@drawable/buttonshape"-->
+        <!--android:shadowColor="#232927"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal|center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ON" />
+
+        <Button
+            android:id="@+id/btnOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OFF" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
