@@ -1,43 +1,33 @@
 package com.example.cerebro;
 
 import android.util.Log;
-
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.*;
 
 public class MQTTclient implements MqttCallback {
 
     MqttClient myClient;
-    private String message_string="";
+    private String message_string = "";
     private ChangeListener listener;
-
-    public MQTTclient() {
-    }
-
-    public static void main(String[] args) {
-        new MQTTclient().runClient();
-    }
+    private String IPport = "tcp://10.0.2.2:1883";      //for the emulator
 
     public void runClient() {
         MemoryPersistence persistence = new MemoryPersistence();
         try {
-            //tcp://10.0.2.2:1883 is the broker for the emulator
-            myClient = new MqttClient("tcp://10.0.2.2:1883", "Cerebro2",persistence);
-            Log.i("main","connected");
+            myClient = new MqttClient(IPport, "Cerebro2", persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
 
             myClient.setCallback( this);
             myClient.connect(connOpts);
 
-            myClient.subscribe("instructions");;
-            Log.i("main","subscribed");
+            myClient.subscribe("java_app");
+            Log.i("Mqtt Client","Subscribing to topic: java_app");
 
         } catch (MqttException e) {
             e.printStackTrace();
@@ -53,8 +43,17 @@ public class MQTTclient implements MqttCallback {
         if (listener != null) listener.onChange();
     }
 
-    public ChangeListener getListener() {
-        return listener;
+    public void sendMessage(String msg) {
+        int qos = 2;
+        MqttMessage message;
+        message = new MqttMessage(msg.getBytes());
+        message.setQos(qos);
+        try {
+            Log.i("Mqtt Client","Publishing to topic: cerebro");
+            myClient.publish("cerebro", message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setListener(ChangeListener listener) {
@@ -73,20 +72,16 @@ public class MQTTclient implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message)
             throws Exception {
-        Log.i("Main activity","------------------------------------------------");
-        System.out.println("-------------------------------------------------");
-        System.out.println("Topic: " + topic);
+        Log.i("Mqtt Client","------------------------------------------------");
+        Log.i("Topic", topic);
 
         setMessage_string(new String(message.getPayload()));
-        System.out.println("Main activity: " +getMessage_string());
-        Log.i("Main activity","Message: " +getMessage_string());
-        Log.i("Main activity","------------------------------------------------");
-        System.out.println("-------------------------------------------------");
+        Log.i("Message", getMessage_string());
+        Log.i("Mqtt Client","------------------------------------------------");
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        // TODO Auto-generated method stub
     }
 
     public void disconnect() {
@@ -100,4 +95,7 @@ public class MQTTclient implements MqttCallback {
         }
     }
 
+    public void setIPport(String input) {
+        IPport = input;
+    }
 }

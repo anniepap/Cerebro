@@ -3,12 +3,11 @@ package com.example.cerebro;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Camera camera;
     private boolean isFlashOn = false;
     private String IPport = "";
-    private MenuItem item;
+    private int freq = 1;
     Parameters params;
     MediaPlayer mp;
     MQTTclient cl;
@@ -43,40 +42,50 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        final ToggleButton btnToggle = findViewById(R.id.btnToggle);
         mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
         mp.setLooping(true);
         getCamera();
-
         cl = new MQTTclient();
+
+        // Switch button click event to toggle flash on/off
+//        final ToggleButton btnToggle = findViewById(R.id.btnToggle);
+//        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    turnOnFlash();
+//                } else {
+//                    turnOffFlash();
+//                }
+//            }
+//        });
+
+        final Button btnOn = findViewById(R.id.btnOn);
+        final Button btnOff = findViewById(R.id.btnOff);
+
+        btnOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                turnOnFlash();
+            }
+        });
+        btnOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                turnOffFlash();
+            }
+        });
+    }
+
+    private void startMqtt() {
         cl.runClient();
         cl.setListener(new MQTTclient.ChangeListener() {
             @Override
             public void onChange() {
-                if(cl.getMessage_string().equals("turn On")){
-                    Log.i("main","TURNED ON");
+                if (cl.getMessage_string().equals("turn On")) {
                     turnOnFlash();
-                }
-                else if(cl.getMessage_string().equals("turn Off")){
-                    Log.i("main","TURNED OFF");
+                } else if (cl.getMessage_string().equals("turn Off")) {
                     turnOffFlash();
                 }
-                else{
-                    Log.i("main","neither");
-                }
-                // btnToggle.setChecked(isFlashOn);
-            }
-        });
-
-        // Switch button click event to toggle flash on/off
-        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    turnOnFlash();
-                } else {
-                    turnOffFlash();
-                }
-                // btnToggle.setChecked(isFlashOn);
             }
         });
     }
@@ -165,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        cl.disconnect();
         super.onStop();
         if (this.isFinishing()) {
             mp.stop();
@@ -202,8 +212,10 @@ public class MainActivity extends AppCompatActivity {
 
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    IPport = "tcp://" + IP.getText().toString();// + ":" + port.getText().toString();
+                    IPport = "tcp://" + IP.getText().toString() + ":" + port.getText().toString();
                     Log.i("IPportInput", IPport);
+                    cl.setIPport(IPport);
+                    startMqtt();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -225,7 +237,9 @@ public class MainActivity extends AppCompatActivity {
             final NumberPicker numberPicker = dialogView.findViewById(R.id.dialog_number_picker);
             numberPicker.setMinValue(1);
             numberPicker.setMaxValue(10);
+            numberPicker.setValue(freq);
             numberPicker.setWrapSelectorWheel(true);
+
             numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                 @Override
                 public void onValueChange(NumberPicker numberPicker, int id, int i) {
@@ -238,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Log.i("frequencyInput", "" + numberPicker.getValue());
+                    freq = numberPicker.getValue();
+                    cl.sendMessage(String.valueOf(freq));
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
