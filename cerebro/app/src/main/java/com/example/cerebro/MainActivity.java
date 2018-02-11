@@ -1,6 +1,11 @@
 package com.example.cerebro;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -14,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.content.Intent;
 import android.app.AlertDialog;
@@ -161,6 +167,20 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // on starting the app get the camera params
         getCamera();
+
+        // on starting the app checks internet connection
+        final Handler handler = new Handler();
+        final int delay = 8000; //1000 < milliseconds < 10000
+        final WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        final WifiReceiver wifiReceiver = new WifiReceiver();
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                wifiManager.startScan();
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
     }
 
     @Override
