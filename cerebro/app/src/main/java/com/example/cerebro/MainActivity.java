@@ -35,9 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFlashOn = false;
     private String IPport = "";
     private int freq = 1;
-    Parameters params;
-    MediaPlayer mp;
-    MQTTclient cl;
+    private Parameters params;
+    private MediaPlayer mp;
+    private MQTTclient cl;
+    private Handler handler;
+    private WifiReceiver wifiReceiver;
+    private WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         mp.setLooping(true);
         getCamera();
         cl = new MQTTclient();
+        handler = new Handler();
+        wifiReceiver = new WifiReceiver();
 
         // Switch button click event to toggle flash on/off
 //        final ToggleButton btnToggle = findViewById(R.id.btnToggle);
@@ -178,16 +183,14 @@ public class MainActivity extends AppCompatActivity {
         getCamera();
 
         // on starting the app checks internet connection
-        final Handler handler = new Handler();
-        final int delay = 8000; //1000 < milliseconds < 10000
-        final WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        final WifiReceiver wifiReceiver = new WifiReceiver();
+        final int delay = 8; // seconds
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         handler.postDelayed(new Runnable(){
             public void run(){
                 registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
                 wifiManager.startScan();
-                handler.postDelayed(this, delay);
+                handler.postDelayed(this, delay * 1000);
             }
         }, delay);
     }
@@ -198,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         if (this.isFinishing()) {
             mp.stop();
+        }
+        if (this.wifiReceiver != null) {
+            unregisterReceiver(wifiReceiver);
+            wifiReceiver = null;
         }
     }
 
