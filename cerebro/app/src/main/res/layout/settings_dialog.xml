@@ -41,7 +41,8 @@
             android:layout_weight="1"
             android:layout_marginHorizontal="25dp"
             android:inputType="numberDecimal"
-            android:digits="0123456789"/>
+            android:digits="0123456789"
+            android:maxLength="4"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -28,6 +28,8 @@ import android.hardware.Camera.Parameters;
 import android.media.MediaPlayer;
 import android.util.Log;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
     private WifiReceiver wifiReceiver;
     private WifiManager wifiManager;
+    private String regex = "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\\.|$)){4}";
+    final Pattern ptn = Pattern.compile(regex);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,10 +243,15 @@ public class MainActivity extends AppCompatActivity {
 
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    IPport = "tcp://" + IP.getText().toString() + ":" + port.getText().toString();
-                    Log.i("IPportInput", IPport);
-                    cl.setIPport(IPport);
-                    startMqtt();
+                    Matcher mtch = ptn.matcher(IP.getText().toString());
+                    if (mtch.find()) {
+                        IPport = "tcp://" + IP.getText().toString() + ":" + port.getText().toString();
+                        Log.i("IPportInput", IPport);
+                        cl.setIPport(IPport);
+                        startMqtt();
+                    } else {
+                        Log.e("Input Error", "IP is not in correct form");
+                    }
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
