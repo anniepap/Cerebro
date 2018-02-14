@@ -24,6 +24,7 @@ public class Entropy {
         double entr;
 
         File folder = new File("C:/Users/User/Desktop/Data Final for Software Development");
+        String trainingFile="C:/Users/User/Desktop/Training Set for Software Development/Training Set.csv";
         File[] listOfFiles = folder.listFiles();
         cur_file=0;
         for (File file : listOfFiles){
@@ -53,13 +54,14 @@ public class Entropy {
                 //dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
                 entr=calculateEntropy(dataVector[i]);
 
-                System.out.println("entropy of sensor " + i + " is ="+entr);
+                //System.out.println("entropy of sensor " + i + " is ="+entr);
                 v[cur_file].add(entr);
                 //calculateEntropy(dataVector[i]);
             }
             v[cur_file].add(file.getName());
             cur_file++;
         }
+        KNNalgorithm knn=new KNNalgorithm(trainingFile,v);
 
     }
 
@@ -79,6 +81,8 @@ public class Entropy {
 
         return entropy;
     }//calculateEntropy(double [])
+
+
 
     public static void main(String[] args) {
         Entropy en = new Entropy();
