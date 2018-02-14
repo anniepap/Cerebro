@@ -1,8 +1,8 @@
 import java.util.LinkedList;
 
 public class ProdConsExample {
-    public static void main(String[] args) throws InterruptedException {
 
+    public static void main(String[] args) throws InterruptedException {
         final PC pc = new PC();
 
         // Create producer thread
@@ -42,6 +42,9 @@ public class ProdConsExample {
 
     // Containts both producer and consumer
     public static class PC {
+        int frequency = 5;
+        long previous = System.currentTimeMillis();
+
         // Use a list as buffer
         LinkedList<Integer> list = new LinkedList<>();
         int capacity = 3;
@@ -51,7 +54,7 @@ public class ProdConsExample {
             int value = 0;
             while (true) {
                 synchronized (this) {
-                    // producer thread waits while list is full
+                    // producer thread waits if list is full
                     while (list.size() == capacity)
                         wait();
 
@@ -73,20 +76,25 @@ public class ProdConsExample {
         public void consume() throws InterruptedException {
             while (true) {
                 synchronized (this) {
-                    // consumer thread waits while list is empty
-                    while (list.size() == 0)
-                        wait();
+                    long now = System.currentTimeMillis();
+                    if ((now - previous)/1000 >= frequency) {
+                        previous = now;
 
-                    // get first item from the list
-                    int value = list.removeFirst();
-                    System.out.println("Consumer consumed: " + value);
+                        // consumer thread waits if list is empty
+                        while (list.size() == 0)
+                            wait();
 
-                    // Wake up producer thread
-                    notify();
-                    Thread.sleep(1000);
+                        // get first item from the list
+                        int value = list.removeFirst();
+                        System.out.println("Consumer consumed: " + value);
 
-                    if (value == 5)
-                        return;
+                        // Wake up producer thread
+                        notify();
+                        Thread.sleep(1000);
+
+                        if (value == 5)
+                            return;
+                    }
                 }
             }
         }

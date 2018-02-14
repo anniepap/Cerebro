@@ -26,8 +26,8 @@ public class MQTTclient implements MqttCallback {
             myClient.setCallback( this);
             myClient.connect(connOpts);
 
-            myClient.subscribe("java_app");
-            Log.i("Mqtt Client","Subscribing to topic: java_app");
+            myClient.subscribe("commands");
+            Log.i("Mqtt Client","Subscribing to topic: commands");
 
         } catch (MqttException e) {
             e.printStackTrace();
@@ -49,8 +49,8 @@ public class MQTTclient implements MqttCallback {
         message = new MqttMessage(msg.getBytes());
         message.setQos(qos);
         try {
-            Log.i("Mqtt Client","Publishing to topic: cerebro");
-            myClient.publish("cerebro", message);
+            Log.i("Mqtt Client","Publishing to topic: frequency");
+            myClient.publish("frequency", message);
         } catch (MqttException e) {
             e.printStackTrace();
         }

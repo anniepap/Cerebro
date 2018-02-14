@@ -50,7 +50,7 @@ public class MQTTclient implements MqttCallback {
         }
 
         int qos = 2;
-        String topic = "cerebro";
+        String topic = "frequency";
         try {
             System.out.println("Subscribing to topic: " + topic);
             myClient.subscribe(topic, qos);
@@ -58,7 +58,7 @@ public class MQTTclient implements MqttCallback {
             e.printStackTrace();
         }
 
-        topic = "java_app";
+        topic = "commands";
         System.out.println("Publishing on topic: " + topic);
         MqttMessage message;
         Scanner scanner = new Scanner(System.in);
