@@ -6,4 +6,6 @@
     <string name="action_exit">Exit</string>
     <string name="ip_input">IP address</string>
     <string name="port_input">Port</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
 </resources>

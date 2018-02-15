@@ -38,14 +38,23 @@
             android:id="@+id/btnOn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ON" />
+            android:text="@string/on"
+            android:textColor="@drawable/buttontext"
+            android:textSize="18sp"
+            android:layout_margin="10dp"
+            android:background="@drawable/buttonshape"
+            android:shadowColor="#232927" />
 
         <Button
             android:id="@+id/btnOff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OFF" />
-
+            android:text="@string/off"
+            android:textColor="@drawable/buttontextoff"
+            android:textSize="18sp"
+            android:layout_margin="10dp"
+            android:background="@drawable/buttonshapeoff"
+            android:shadowColor="#232927" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
