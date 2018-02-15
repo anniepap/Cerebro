@@ -41,7 +41,8 @@ public class KNNalgorithm {
             e.printStackTrace();
         }
 
-
+        Double efficiency=0.0;
+        Double eff_counter=0.0;
         for (int j = 0; j < numberofFiles; j++) {
             System.out.println("-----------------------------------");
             for (int i = 0; i < cur_line; i++) {
@@ -75,6 +76,8 @@ public class KNNalgorithm {
             String open = "EyesOpened";
             String closed = "EyesClosed";
             String[] l;
+            String l2="";
+            String[] ls;
             for (Map.Entry<String, Double> entry : I.entrySet()) {
 
                 l = entry.getKey().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
@@ -89,12 +92,26 @@ public class KNNalgorithm {
                     w_closed += 1 / entry.getValue();
                 }
             }
-            if (opened_counter * w_opened > closed_counter * w_closed)
+            l2=(String)v[j].elementAt(numofSensors);
+            ls=l2.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+            l2=ls[1].split("\\.")[1];
+            System.out.println("name of  xi label is " +l2);
+
+            if (opened_counter * w_opened > closed_counter * w_closed) {
                 System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
-            else
+
+                if(open.compareTo(l2) == 0)
+                    eff_counter++;
+            }
+            else {
                 System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
+                if(closed.compareTo(l2) == 0)
+                    eff_counter++;
+            }
 
         }
+        efficiency=(eff_counter/numberofFiles)*100;
+        System.out.println("Efficiency is : " + efficiency +"%" );
 
     }
 
