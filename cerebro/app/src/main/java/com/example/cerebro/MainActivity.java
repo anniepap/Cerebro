@@ -161,6 +161,13 @@ public class MainActivity extends AppCompatActivity {
             camera.setParameters(params);
             camera.startPreview();
             isFlashOn = true;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    turnOffFlash();
+                }
+            }, 1000);  // POSA MILLISECONDS EINAI TO TUNE?? 
         }
     }
 
@@ -226,6 +233,12 @@ public class MainActivity extends AppCompatActivity {
         }, delay);
     }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        turnOffFlash();
+//    }
+
     @Override
     protected void onStop() {
         cl.disconnect();
@@ -236,6 +249,10 @@ public class MainActivity extends AppCompatActivity {
         if (this.wifiReceiver != null) {
             unregisterReceiver(wifiReceiver);
             wifiReceiver = null;
+        }
+        if (camera != null) {
+            camera.release();
+            camera = null;
         }
     }
 
