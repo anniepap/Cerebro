@@ -3,6 +3,9 @@ package com.example.cerebro;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,20 +28,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.media.MediaPlayer;
 import android.util.Log;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     private Camera camera;
+    private Ringtone r;
     private boolean isFlashOn = false;
+    private boolean isSoundOn = false;
     private String IPport = "";
     private int freq = 1;
     private Parameters params;
-    private MediaPlayer mp;
     private MQTTclient cl;
     private Handler handler;
     private WifiReceiver wifiReceiver;
@@ -55,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        mp = MediaPlayer.create(getApplicationContext(), R.raw.vit);
-        mp.setLooping(true);
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
         getCamera();
+
         cl = new MQTTclient();
         handler = new Handler();
         wifiReceiver = new WifiReceiver();
@@ -80,12 +83,14 @@ public class MainActivity extends AppCompatActivity {
         btnOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                turnOnSound();
                 turnOnFlash();
             }
         });
         btnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                turnOffSound();
                 turnOffFlash();
             }
         });
@@ -97,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChange() {
                 if (cl.getMessage_string().equals("turn On")) {
+                    turnOnSound();
                     turnOnFlash();
                 } else if (cl.getMessage_string().equals("turn Off")) {
+                    turnOffSound();
                     turnOffFlash();
                 }
             }
@@ -117,8 +124,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Turning on sound
+    private void turnOnSound() {
+        turnOffSound();
+        if (!isSoundOn) {
+            try {
+                r.play();
+                isSoundOn = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Turning off sound
+    private void turnOffSound() {
+        if (isSoundOn) {
+            try {
+                r.stop();
+                isSoundOn = false;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // Turning On flash
     private void turnOnFlash() {
+        //startService(new Intent(getBaseContext(), FlashLightService.class));
         if (!isFlashOn) {
             if (camera == null || params == null) {
                 return;
@@ -128,12 +161,12 @@ public class MainActivity extends AppCompatActivity {
             camera.setParameters(params);
             camera.startPreview();
             isFlashOn = true;
-            mp.start();
         }
     }
 
     // Turning Off flash
     private void turnOffFlash() {
+        //stopService(new Intent(getBaseContext(), FlashLightService.class));
         if (isFlashOn) {
             if (camera == null || params == null) {
                 return;
@@ -143,12 +176,6 @@ public class MainActivity extends AppCompatActivity {
             camera.setParameters(params);
             camera.stopPreview();
             isFlashOn = false;
-            mp.stop();
-            try {
-                mp.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -204,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         cl.disconnect();
         super.onStop();
         if (this.isFinishing()) {
-            mp.stop();
+            turnOffSound();
         }
         if (this.wifiReceiver != null) {
             unregisterReceiver(wifiReceiver);
