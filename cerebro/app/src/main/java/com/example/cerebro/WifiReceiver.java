@@ -13,8 +13,8 @@ public class WifiReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         ServiceManager serviceManager = new ServiceManager(context);
         if(serviceManager.isNetworkAvailable())
-            Toast.makeText(context, "Network Available" + i++,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Network Available", Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(context, "No Internet Connection",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
     }
 }

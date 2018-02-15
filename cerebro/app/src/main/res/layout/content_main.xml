@@ -36,8 +36,8 @@
 
         <Button
             android:id="@+id/btnOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:text="@string/on"
             android:textColor="@drawable/buttontext"
             android:textSize="18sp"
@@ -47,8 +47,8 @@
 
         <Button
             android:id="@+id/btnOff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:text="@string/off"
             android:textColor="@drawable/buttontextoff"
             android:textSize="18sp"

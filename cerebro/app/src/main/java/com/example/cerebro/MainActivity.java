@@ -3,6 +3,7 @@ package com.example.cerebro;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFlashOn = false;
     private boolean isSoundOn = false;
     private String IPport = "";
-    private int freq = 1;
+    private int freq = 3;
     private Parameters params;
     private MQTTclient cl;
     private Handler handler;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private String regex = "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\\.|$)){4}";
     final Pattern ptn = Pattern.compile(regex);
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
                 turnOffFlash();
             }
         });
+
+        editor = getSharedPreferences("IPport", MODE_PRIVATE).edit();
+        editor.putString("IP", "");
+        editor.putString("port", "");
+        editor.apply();
     }
 
     private void startMqtt() {
@@ -151,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Turning On flash
     private void turnOnFlash() {
-        //startService(new Intent(getBaseContext(), FlashLightService.class));
         if (!isFlashOn) {
             if (camera == null || params == null) {
                 return;
@@ -173,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Turning Off flash
     private void turnOffFlash() {
-        //stopService(new Intent(getBaseContext(), FlashLightService.class));
         if (isFlashOn) {
             if (camera == null || params == null) {
                 return;
@@ -271,6 +276,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            SharedPreferences prefs = getSharedPreferences("IPport", MODE_PRIVATE);
+            String IPpref = prefs.getString("IP", "No IP defined");
+            String portPref = prefs.getString("port", "No port defined");
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Connection Settings");
             LinearLayout layout = new LinearLayout(this);
@@ -280,10 +289,12 @@ public class MainActivity extends AppCompatActivity {
             TextView IPview = view.findViewById(R.id.ip_input);
             IPview.setText("IP address:", TextView.BufferType.EDITABLE);
             final EditText IP = view.findViewById(R.id.IP);
+            IP.setText(IPpref);
 
             TextView portView = view.findViewById(R.id.port_input);
             portView.setText("Port:", TextView.BufferType.EDITABLE);
             final EditText port = view.findViewById(R.id.port);
+            port.setText(portPref);
 
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -293,6 +304,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("IPportInput", IPport);
                         cl.setIPport(IPport);
                         startMqtt();
+
+                        editor = getSharedPreferences("IPport", MODE_PRIVATE).edit();
+                        editor.putString("IP", IP.getText().toString());
+                        editor.putString("port", port.getText().toString());
+                        editor.apply();
                     } else {
                         Log.e("Input Error", "IP is not in correct form");
                     }
