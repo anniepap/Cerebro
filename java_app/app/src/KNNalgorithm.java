@@ -7,8 +7,8 @@ import java.util.*;
 public class KNNalgorithm {
 
     public int numofSensors=14;
-    public int training_size=50;
-    public int k=5;
+    public int training_size=37;
+    public int k=7;
     public int numberofFiles=264;
     String cvsSplitBy = ",";
     String line = "";
@@ -23,6 +23,7 @@ public class KNNalgorithm {
 
     public KNNalgorithm(String trainingFile,Vector[]v) {
         int cur_line = 0;
+       // MQTTclient cl = new MQTTclient();
 
         try (BufferedReader br = new BufferedReader(new FileReader(trainingFile))) {
             line = br.readLine();
@@ -43,6 +44,44 @@ public class KNNalgorithm {
 
         Double efficiency=0.0;
         Double eff_counter=0.0;
+/*
+        ProdCons pc=new ProdCons();
+        // Create producer thread
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pc.produce(command);
+                }
+                catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // Create consumer thread
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pc.consume();
+                }
+                catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // Start both threads
+        t1.start();
+        t2.start();
+
+        // Producer tread finishes before consumer
+        //t1.join();
+        //t2.join();
+
+
+*/
         for (int j = 0; j < numberofFiles; j++) {
             System.out.println("-----------------------------------");
             for (int i = 0; i < cur_line; i++) {
@@ -97,16 +136,29 @@ public class KNNalgorithm {
             l2=ls[1].split("\\.")[1];
             System.out.println("name of  xi label is " +l2);
 
-            if (opened_counter * w_opened > closed_counter * w_closed) {
+            if ((opened_counter * w_opened) > (closed_counter * w_closed)) {
                 System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
 
                 if(open.compareTo(l2) == 0)
                     eff_counter++;
             }
-            else {
+            else if((opened_counter * w_opened) < (closed_counter * w_closed)) {
                 System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
                 if(closed.compareTo(l2) == 0)
                     eff_counter++;
+            }
+            else{
+                if(opened_counter>closed_counter){
+                    System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
+
+                    if(open.compareTo(l2) == 0)
+                        eff_counter++;
+                }
+                else{
+                    System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
+                    if(closed.compareTo(l2) == 0)
+                        eff_counter++;
+                }
             }
 
         }
@@ -121,7 +173,7 @@ public class KNNalgorithm {
         double dist=0;
         for (int i=0;i<numofSensors;i++){
             double d=trainingSet[i]-(double)featureVector.elementAt(i);
-            dist+=d*d;
+            dist+=Math.pow(d, 2);
         }
         return Math.sqrt(dist);
     }

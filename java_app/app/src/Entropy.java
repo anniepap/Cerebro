@@ -6,13 +6,15 @@ import java.io.IOException;
 
 public class Entropy {
     public int numofSensors=14;
-    public int size=1500;
+    public int size=1450;
     public int numberofFiles=264;
 
     public static double LOG_BASE = 2.0;
 
     public void calculations(){
         double[][] dataVector =new double[numofSensors][size];
+        double[][] tempArray=new double[numofSensors][];
+
         Vector []v = new Vector[numberofFiles];
         for(int i = 0; i < v.length; i++)
             v[i] = new Vector(15);
@@ -42,7 +44,10 @@ public class Entropy {
                         String[] line_sensors = line.split(cvsSplitBy);
 
                         for (int i = 0; i < numofSensors; i++) {
-                            dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
+                            if(Double.parseDouble(line_sensors[i+numofSensors])==4.0)
+                                dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
+                            else
+                                System.out.println("QOS IS " +line_sensors[i+numofSensors] );
                             //System.out.println("line " + cur_line + " , value=" + line_sensors[i]);
                         }
                         cur_line++;
@@ -51,12 +56,17 @@ public class Entropy {
                     e.printStackTrace();
                 }
             for (int i = 0; i < numofSensors; i++) {
+                tempArray[i] = new double[cur_line];                              //array with the right size !!!
+                System.arraycopy(dataVector[i],0,tempArray[i],0,cur_line);
+            }
+
+
+            for (int i = 0; i < numofSensors; i++) {
                 //dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
-                entr=calculateEntropy(dataVector[i]);
+                entr=calculateEntropy(tempArray[i]);
 
                 //System.out.println("entropy of sensor " + i + " is ="+entr);
                 v[cur_file].add(entr);
-                //calculateEntropy(dataVector[i]);
             }
             v[cur_file].add(file.getName());
             cur_file++;
@@ -71,7 +81,7 @@ public class Entropy {
         double entropy = 0.0;
         for (Double prob : state.probMap.values())
         {
-            if (prob > 0)
+            if (prob > 0.0)
             {
                 entropy -= prob * Math.log(prob);
             }
