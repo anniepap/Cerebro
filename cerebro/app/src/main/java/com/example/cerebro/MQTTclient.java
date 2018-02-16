@@ -66,6 +66,7 @@ public class MQTTclient implements MqttCallback {
 
     @Override
     public void connectionLost(Throwable cause) {
+        System.out.println("ERROR!!!!! " + cause.getCause());
         System.out.println("Connection lost!");
     }
 

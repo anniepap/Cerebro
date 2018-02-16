@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -168,12 +169,12 @@ public class MainActivity extends AppCompatActivity {
             camera.startPreview();
             isFlashOn = true;
 
-            new Handler().postDelayed(new Runnable() {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     turnOffFlash();
                 }
-            }, 1000);  // POSA MILLISECONDS EINAI TO TUNE?? 
+            }, 1000);  // POSA MILLISECONDS EINAI TO TUNE??
         }
     }
 
