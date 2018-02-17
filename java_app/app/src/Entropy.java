@@ -31,10 +31,6 @@ public class Entropy {
         cur_file=0;
         for (File file : listOfFiles){
             int cur_line=0;
-            if (file.isFile()) {
-                System.out.println(file.getName());
-                //System.out.println(file.getPath());
-            }
             csvFile = file.getPath();
 
                 try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -46,9 +42,6 @@ public class Entropy {
                         for (int i = 0; i < numofSensors; i++) {
                             if(Double.parseDouble(line_sensors[i+numofSensors])==4.0)
                                 dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
-                            else
-                                System.out.println("QOS IS " +line_sensors[i+numofSensors] );
-                            //System.out.println("line " + cur_line + " , value=" + line_sensors[i]);
                         }
                         cur_line++;
                     }
@@ -56,7 +49,7 @@ public class Entropy {
                     e.printStackTrace();
                 }
             for (int i = 0; i < numofSensors; i++) {
-                tempArray[i] = new double[cur_line];                              //array with the right size !!!
+                tempArray[i] = new double[cur_line];                              //array with the right size
                 System.arraycopy(dataVector[i],0,tempArray[i],0,cur_line);
             }
 
