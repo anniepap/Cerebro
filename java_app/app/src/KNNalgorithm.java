@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -36,7 +35,6 @@ public class KNNalgorithm {
                 labels[cur_line] = line_sensors[0] + String.valueOf(cur_line + 1);
                 for (int i = 1; i <= numofSensors; i++) {
                     trainingArray[cur_line][i - 1] = Float.parseFloat(line_sensors[i]);
-                    //System.out.println("KNNline " + cur_line + " , value=" + trainingArray[cur_line][i-1]);
                 }
                 cur_line++;
             }
@@ -50,23 +48,23 @@ public class KNNalgorithm {
             System.out.println("-----------------------------------");
             for (int i = 0; i < cur_line; i++) {
                 eucDistances[i] = EuclideanDistance(trainingArray[i], v[j]);
-                System.out.println("euclidean distance is " + eucDistances[i] + " , label=" + labels[i]);                             //all euclidean distances unsorted
-                eucMap.put(labels[i], eucDistances[i]);
+                //System.out.println("euclidean distance is " + eucDistances[i] + " , label=" + labels[i]);
+                eucMap.put(labels[i], eucDistances[i]);                         //all euclidean distances unsorted
             }
 
             Map<String, Double> sortedeucMap = sortByValue(eucMap);                              //Sorted map with the euclidean distances and labels
 
             for (Map.Entry<String, Double> entry : sortedeucMap.entrySet()) {
-                System.out.println("Key : " + entry.getKey()
-                        + " Value : " + entry.getValue());
+                //System.out.println("sorted euclidean distance with Key : " + entry.getKey()
+                       // + " Value : " + entry.getValue());
             }
 
             Map<String, Double> I = new HashMap<String, Double>();
             int i = 0;
             for (Map.Entry<String, Double> entry : sortedeucMap.entrySet()) {                   //I is a new map of only the k closest
                 if (i < k) {
-                    System.out.println("Key in I: " + entry.getKey()
-                            + " Value in I : " + entry.getValue());
+                   // System.out.println("Key in I: " + entry.getKey()
+                          //  + " Value in I : " + entry.getValue());
                     I.put(entry.getKey(), entry.getValue());
                 }
                 i++;
@@ -84,7 +82,7 @@ public class KNNalgorithm {
             for (Map.Entry<String, Double> entry : I.entrySet()) {
 
                 l = entry.getKey().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-                System.out.println("Label Yi : " + l[0]);
+                //System.out.println("Label Yi : " + l[0]);
 
                 if (open.compareTo(l[0]) == 0) {                                                //add to Yi counter and add to Wyi
                     opened_counter++;
