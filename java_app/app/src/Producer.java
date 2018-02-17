@@ -15,8 +15,8 @@ public class Producer implements Runnable {
     public void produce(LinkedList<String> list, String command) throws InterruptedException {
         synchronized (this) {
             // producer thread waits if list is full
-            while (list.size() == capacity)
-                wait();
+            //while (list.size() == capacity)
+                //wait();
 
             // insert in list
             list.add(command);

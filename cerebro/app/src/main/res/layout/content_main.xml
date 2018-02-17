@@ -8,25 +8,6 @@
     tools:context="com.example.cerebro.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <!--<ToggleButton-->
-        <!--android:id="@+id/btnToggle"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-
-        <!--android:textOn="Turn Off"-->
-        <!--android:textOff="Turn On"-->
-        <!--android:checked="false"-->
-
-        <!--android:textColor="@drawable/buttontext"-->
-        <!--android:textSize="18sp"-->
-
-        <!--android:background="@drawable/buttonshape"-->
-        <!--android:shadowColor="#232927"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,23 +17,23 @@
 
         <Button
             android:id="@+id/btnOn"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:text="@string/on"
             android:textColor="@drawable/buttontext"
             android:textSize="18sp"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:background="@drawable/buttonshape"
             android:shadowColor="#232927" />
 
         <Button
             android:id="@+id/btnOff"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:text="@string/off"
             android:textColor="@drawable/buttontextoff"
             android:textSize="18sp"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:background="@drawable/buttonshapeoff"
             android:shadowColor="#232927" />
     </LinearLayout>

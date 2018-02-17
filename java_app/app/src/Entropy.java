@@ -5,13 +5,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class Entropy {
-    public int numofSensors=14;
-    public int size=1450;
-    public int numberofFiles=264;
+    private int numofSensors=14;
+    private int size=1450;
+    private int numberofFiles=264;
 
-    public static double LOG_BASE = 2.0;
+    private static double LOG_BASE = 2.0;
 
-    public void calculations(){
+    private void calculations() throws InterruptedException {
         double[][] dataVector =new double[numofSensors][size];
         double[][] tempArray=new double[numofSensors][];
 
@@ -31,10 +31,6 @@ public class Entropy {
         cur_file=0;
         for (File file : listOfFiles){
             int cur_line=0;
-            if (file.isFile()) {
-                System.out.println(file.getName());
-                //System.out.println(file.getPath());
-            }
             csvFile = file.getPath();
 
                 try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -46,9 +42,6 @@ public class Entropy {
                         for (int i = 0; i < numofSensors; i++) {
                             if(Double.parseDouble(line_sensors[i+numofSensors])==4.0)
                                 dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
-                            else
-                                System.out.println("QOS IS " +line_sensors[i+numofSensors] );
-                            //System.out.println("line " + cur_line + " , value=" + line_sensors[i]);
                         }
                         cur_line++;
                     }
@@ -56,10 +49,9 @@ public class Entropy {
                     e.printStackTrace();
                 }
             for (int i = 0; i < numofSensors; i++) {
-                tempArray[i] = new double[cur_line];                              //array with the right size !!!
+                tempArray[i] = new double[cur_line];                              //array with the right size
                 System.arraycopy(dataVector[i],0,tempArray[i],0,cur_line);
             }
-
 
             for (int i = 0; i < numofSensors; i++) {
                 //dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
@@ -75,7 +67,7 @@ public class Entropy {
 
     }
 
-    public static double calculateEntropy(double[] dataVector) {
+    private static double calculateEntropy(double[] dataVector) {
         ProbabilityState state = new ProbabilityState(dataVector);
 
         double entropy = 0.0;
@@ -92,9 +84,7 @@ public class Entropy {
         return entropy;
     }//calculateEntropy(double [])
 
-
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Entropy en = new Entropy();
         en.calculations();
     }

@@ -2,14 +2,13 @@ import java.util.LinkedList;
 
 public class Consumer implements Runnable {
 
-    //MQTTclient cl;
-    LinkedList<String> list = new LinkedList<>();
+    MQTTclient cl;
+    LinkedList<String> buffer = new LinkedList<>();
     int capacity = 100;
-    int frequency = 2;
     long previous = System.currentTimeMillis();
 
-    Consumer() {
-        //this.cl = cl;
+    Consumer(MQTTclient cl) {
+        this.cl = cl;
         new Thread(this, "Consumer").start();
     }
 
@@ -26,17 +25,17 @@ public class Consumer implements Runnable {
         while (true) {
             synchronized (this) {
                 long now = System.currentTimeMillis();
-                if ((now - previous)/1000 >= frequency) {
+                if ((now - previous)/1000 >= cl.getFrequency()) {
                     previous = now;
 
                     // consumer thread waits if list is empty
-                    while (list.size() == 0)
+                    while (buffer.size() == 0)
                         wait();
 
-                    // get first item from the list
-                    String command = list.removeFirst();
+                    // get first item from the list and publish it
+                    String command = buffer.removeFirst();
                     System.out.println("Consumer consumed: " + command);
-                    //////////////////////////////////////////////////////////////send mqtt
+                    cl.runPublish(command);
 
                     // Wake up producer thread
                     notify();
@@ -50,7 +49,7 @@ public class Consumer implements Runnable {
     }
 
     public LinkedList<String> getBuffer() {
-        return list;
+        return buffer;
     }
 
 }
