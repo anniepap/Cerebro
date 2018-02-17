@@ -5,19 +5,18 @@ import java.util.*;
 
 public class KNNalgorithm {
 
-    public int numofSensors=14;
-    public int training_size=37;
-    public int k=7;
-    public int numberofFiles=264;
-    String cvsSplitBy = ",";
-    String line = "";
+    private int numofSensors=14;
+    private int training_size=37;
+    private int k=7;
+    private int numberofFiles=264;
+    private String cvsSplitBy = ",";
+    private String line = "";
 
-    double[][] trainingArray =new double[training_size][numofSensors];
-    double[][] minDistances =new double[training_size][k];
-    double[] eucDistances =new double[training_size];
-    String[] labels=new String[training_size];
+    private double[][] trainingArray =new double[training_size][numofSensors];
+    private double[] eucDistances =new double[training_size];
+    private String[] labels=new String[training_size];
 
-    Map<String,Double> eucMap=new HashMap<String,Double>();
+    private Map<String,Double> eucMap=new HashMap<String,Double>();
 
 
     public KNNalgorithm(String trainingFile,Vector[]v) throws InterruptedException {
@@ -54,10 +53,10 @@ public class KNNalgorithm {
 
             Map<String, Double> sortedeucMap = sortByValue(eucMap);                              //Sorted map with the euclidean distances and labels
 
-            for (Map.Entry<String, Double> entry : sortedeucMap.entrySet()) {
+            //for (Map.Entry<String, Double> entry : sortedeucMap.entrySet()) {
                 //System.out.println("sorted euclidean distance with Key : " + entry.getKey()
                        // + " Value : " + entry.getValue());
-            }
+            //}
 
             Map<String, Double> I = new HashMap<String, Double>();
             int i = 0;
@@ -130,7 +129,7 @@ public class KNNalgorithm {
         producer.produce(consumer.getBuffer(), "finish");
     }
 
-    public  double EuclideanDistance(double[] trainingSet,Vector featureVector){
+    private  double EuclideanDistance(double[] trainingSet,Vector featureVector){
         double dist=0;
         for (int i=0;i<numofSensors;i++){
             double d=trainingSet[i]-(double)featureVector.elementAt(i);

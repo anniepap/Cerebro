@@ -5,13 +5,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class Entropy {
-    public int numofSensors=14;
-    public int size=1450;
-    public int numberofFiles=264;
+    private int numofSensors=14;
+    private int size=1450;
+    private int numberofFiles=264;
 
-    public static double LOG_BASE = 2.0;
+    private static double LOG_BASE = 2.0;
 
-    public void calculations() throws InterruptedException {
+    private void calculations() throws InterruptedException {
         double[][] dataVector =new double[numofSensors][size];
         double[][] tempArray=new double[numofSensors][];
 
@@ -67,7 +67,7 @@ public class Entropy {
 
     }
 
-    public static double calculateEntropy(double[] dataVector) {
+    private static double calculateEntropy(double[] dataVector) {
         ProbabilityState state = new ProbabilityState(dataVector);
 
         double entropy = 0.0;
