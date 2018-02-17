@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     turnOffFlash();
                 }
-            }, 1000);  // POSA MILLISECONDS EINAI TO TUNE??
+            }, 500);  // OSA EINAI KAI TO TUNE??
         }
     }
 
@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Log.i("START", "onStart: ON START");
         // on starting the app get the camera params
         getCamera();
 
@@ -239,14 +240,25 @@ public class MainActivity extends AppCompatActivity {
         }, delay);
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        turnOffFlash();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Log.i("PAUSE", "onPause: ON PAUSE");
+        turnOffFlash();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Log.i("RESUME", "onResume: ON RESUME");
+        // Log.i ("SAVED IPport: ", IPport);
+        if (cl.isConnectedOnce)
+            startMqtt();
+    }
 
     @Override
     protected void onStop() {
+        Log.i("stop", "onStop: On STOP is called");
         cl.disconnect();
         super.onStop();
         if (this.isFinishing()) {
@@ -305,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("IPportInput", IPport);
                         cl.setIPport(IPport);
                         startMqtt();
+                        cl.isConnectedOnce = true;
 
                         editor = getSharedPreferences("IPport", MODE_PRIVATE).edit();
                         editor.putString("IP", IP.getText().toString());

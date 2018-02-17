@@ -15,6 +15,7 @@ public class MQTTclient implements MqttCallback {
     private String message_string = "";
     private ChangeListener listener;
     private String IPport = "tcp://10.0.2.2:1883";      //for the emulator
+    public boolean isConnectedOnce = false;
 
     public void runClient() {
         MemoryPersistence persistence = new MemoryPersistence();
@@ -22,6 +23,7 @@ public class MQTTclient implements MqttCallback {
             myClient = new MqttClient(IPport, "Cerebro2", persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
+            connOpts.setAutomaticReconnect(true);
 
             myClient.setCallback( this);
             myClient.connect(connOpts);
