@@ -5,16 +5,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.*;
-import java.util.Scanner;
 
 public class MQTTclient implements MqttCallback {
 
     MqttClient myClient;
-
-    public static void main(String[] args) {
-        MQTTclient cl = new MQTTclient();
-        cl.runClient();
-    }
+    int frequency = 2;
 
     @Override
     public void connectionLost(Throwable t) {
@@ -31,9 +26,10 @@ public class MQTTclient implements MqttCallback {
         System.out.println("Topic: " + topic);
         System.out.println("Message: " + new String(message.getPayload()));
         System.out.println("-------------------------------------------------");
+        frequency = Integer.parseInt(new String(message.getPayload()));
     }
 
-    public void runClient() {
+    public MQTTclient() {
         String clientId = "Cerebro1";
         String broker = "tcp://localhost:1883";
         MemoryPersistence persistence = new MemoryPersistence();
@@ -49,6 +45,10 @@ public class MQTTclient implements MqttCallback {
             me.printStackTrace();
         }
 
+        runSubscribe();
+    }
+
+    public void runSubscribe() {
         int qos = 2;
         String topic = "frequency";
         try {
@@ -57,24 +57,25 @@ public class MQTTclient implements MqttCallback {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        topic = "commands";
+    public void runPublish(String command) {
+        int qos = 2;
+        String topic = "commands";
         System.out.println("Publishing on topic: " + topic);
         MqttMessage message;
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
 
-        while (!line.equals("finish")) {
-            message = new MqttMessage(line.getBytes());
+        if (!command.equals("finish")) {
+            message = new MqttMessage(command.getBytes());
             message.setQos(qos);
             try {
                 myClient.publish(topic, message);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
-            line = scanner.nextLine();
+        } else {
+            disconnect();
         }
-        disconnect();
     }
 
     public void disconnect() {
@@ -91,4 +92,7 @@ public class MQTTclient implements MqttCallback {
         }
     }
 
+    public int getFrequency() {
+        return frequency;
+    }
 }

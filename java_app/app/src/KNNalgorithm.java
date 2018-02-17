@@ -21,9 +21,11 @@ public class KNNalgorithm {
     Map<String,Double> eucMap=new HashMap<String,Double>();
 
 
-    public KNNalgorithm(String trainingFile,Vector[]v) {
+    public KNNalgorithm(String trainingFile,Vector[]v) throws InterruptedException {
         int cur_line = 0;
-       // MQTTclient cl = new MQTTclient();
+        MQTTclient cl = new MQTTclient();
+        Consumer consumer = new Consumer(cl);
+        Producer producer = new Producer();
 
         try (BufferedReader br = new BufferedReader(new FileReader(trainingFile))) {
             line = br.readLine();
@@ -44,44 +46,6 @@ public class KNNalgorithm {
 
         Double efficiency=0.0;
         Double eff_counter=0.0;
-/*
-        ProdCons pc=new ProdCons();
-        // Create producer thread
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    pc.produce(command);
-                }
-                catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // Create consumer thread
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    pc.consume();
-                }
-                catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // Start both threads
-        t1.start();
-        t2.start();
-
-        // Producer tread finishes before consumer
-        //t1.join();
-        //t2.join();
-
-
-*/
         for (int j = 0; j < numberofFiles; j++) {
             System.out.println("-----------------------------------");
             for (int i = 0; i < cur_line; i++) {
@@ -138,36 +102,35 @@ public class KNNalgorithm {
 
             if ((opened_counter * w_opened) > (closed_counter * w_closed)) {
                 System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
-
+                producer.produce(consumer.getBuffer(), "turn On");
                 if(open.compareTo(l2) == 0)
                     eff_counter++;
             }
             else if((opened_counter * w_opened) < (closed_counter * w_closed)) {
                 System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
+                producer.produce(consumer.getBuffer(), "turn Off");
                 if(closed.compareTo(l2) == 0)
                     eff_counter++;
             }
             else{
                 if(opened_counter>closed_counter){
                     System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
-
+                    producer.produce(consumer.getBuffer(), "turn On");
                     if(open.compareTo(l2) == 0)
                         eff_counter++;
                 }
                 else{
                     System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
+                    producer.produce(consumer.getBuffer(), "turn Off");
                     if(closed.compareTo(l2) == 0)
                         eff_counter++;
                 }
             }
-
         }
         efficiency=(eff_counter/numberofFiles)*100;
         System.out.println("Efficiency is : " + efficiency +"%" );
-
+        producer.produce(consumer.getBuffer(), "finish");
     }
-
-
 
     public  double EuclideanDistance(double[] trainingSet,Vector featureVector){
         double dist=0;

@@ -11,7 +11,7 @@ public class Entropy {
 
     public static double LOG_BASE = 2.0;
 
-    public void calculations(){
+    public void calculations() throws InterruptedException {
         double[][] dataVector =new double[numofSensors][size];
         double[][] tempArray=new double[numofSensors][];
 
@@ -60,7 +60,6 @@ public class Entropy {
                 System.arraycopy(dataVector[i],0,tempArray[i],0,cur_line);
             }
 
-
             for (int i = 0; i < numofSensors; i++) {
                 //dataVector[i][cur_line]=Float.parseFloat(line_sensors[i]);
                 entr=calculateEntropy(tempArray[i]);
@@ -92,9 +91,7 @@ public class Entropy {
         return entropy;
     }//calculateEntropy(double [])
 
-
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Entropy en = new Entropy();
         en.calculations();
     }
