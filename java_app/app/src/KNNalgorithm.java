@@ -95,32 +95,48 @@ public class KNNalgorithm {
             l2=(String)v[j].elementAt(numofSensors);
             ls=l2.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
             l2=ls[1].split("\\.")[1];
-            System.out.println("name of  xi label is " +l2);
+            System.out.println("Original label is " +l2);
 
             if ((opened_counter * w_opened) > (closed_counter * w_closed)) {
-                System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
                 producer.produce(consumer.getBuffer(), "turn On");
-                if(open.compareTo(l2) == 0)
+                if(open.compareTo(l2) == 0) {
                     eff_counter++;
+                    System.out.println("Result is  OPEN :Success");
+                }
+                else{
+                    System.out.println("Result is  OPEN :Failure");
+                }
             }
             else if((opened_counter * w_opened) < (closed_counter * w_closed)) {
-                System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
                 producer.produce(consumer.getBuffer(), "turn Off");
-                if(closed.compareTo(l2) == 0)
+                if(closed.compareTo(l2) == 0) {
                     eff_counter++;
+                    System.out.println("Result is  CLOSED :Success");
+                }
+                else{
+                    System.out.println("Result is  CLOSED :Failure");
+                }
             }
             else{
                 if(opened_counter>closed_counter){
-                    System.out.println("OPEN CLASS with value : " + opened_counter * w_opened);
                     producer.produce(consumer.getBuffer(), "turn On");
-                    if(open.compareTo(l2) == 0)
+                    if(open.compareTo(l2) == 0) {
                         eff_counter++;
+                        System.out.println("Result is  OPEN :Success");
+                    }
+                    else{
+                        System.out.println("Result is  OPEN :Failure");
+                    }
                 }
                 else{
-                    System.out.println("CLOSED CLASS with value : " + closed_counter * w_closed);
                     producer.produce(consumer.getBuffer(), "turn Off");
-                    if(closed.compareTo(l2) == 0)
+                    if(closed.compareTo(l2) == 0) {
                         eff_counter++;
+                        System.out.println("Result is  CLOSED :Success");
+                    }
+                    else{
+                        System.out.println("Result is  CLOSED :Failure");
+                    }
                 }
             }
         }
