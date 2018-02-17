@@ -1,12 +1,8 @@
 package com.example.cerebro;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,26 +14,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.content.Intent;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.util.Log;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.media.MediaPlayer;
 
 public class MainActivity extends AppCompatActivity {
 
     private Camera camera;
-    private Ringtone r;
+    private MediaPlayer mp;
     private boolean isFlashOn = false;
     private boolean isSoundOn = false;
     private String IPport = "";
@@ -60,25 +55,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.sound);
         getCamera();
 
         cl = new MQTTclient();
         handler = new Handler();
         wifiReceiver = new WifiReceiver();
-
-        // Switch button click event to toggle flash on/off
-//        final ToggleButton btnToggle = findViewById(R.id.btnToggle);
-//        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    turnOnFlash();
-//                } else {
-//                    turnOffFlash();
-//                }
-//            }
-//        });
 
         final Button btnOn = findViewById(R.id.btnOn);
         final Button btnOff = findViewById(R.id.btnOff);
@@ -136,24 +118,21 @@ public class MainActivity extends AppCompatActivity {
     private void turnOnSound() {
         turnOffSound();
         if (!isSoundOn) {
-            try {
-                r.play();
-                isSoundOn = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            mp.start();
+            isSoundOn = true;
         }
     }
 
     // Turning off sound
     private void turnOffSound() {
         if (isSoundOn) {
+            mp.stop();
             try {
-                r.stop();
-                isSoundOn = false;
-            } catch (Exception e) {
+                mp.prepare();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            isSoundOn = false;
         }
     }
 
@@ -174,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     turnOffFlash();
                 }
-            }, 1000);  // POSA MILLISECONDS EINAI TO TUNE??
+            }, 5000);
         }
     }
 
