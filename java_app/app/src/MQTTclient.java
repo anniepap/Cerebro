@@ -24,7 +24,7 @@ public class MQTTclient implements MqttCallback {
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println("-------------------------------------------------");
         System.out.println("Topic: " + topic);
-        System.out.println("Message: " + new String(message.getPayload()));
+        System.out.println("Message arrived: " + new String(message.getPayload()));
         System.out.println("-------------------------------------------------");
         frequency = Integer.parseInt(new String(message.getPayload()));
     }
@@ -62,11 +62,14 @@ public class MQTTclient implements MqttCallback {
     public void runPublish(String command) {
         int qos = 2;
         String topic = "commands";
-        System.out.println("Publishing on topic: " + topic);
-        MqttMessage message;
 
         if (!command.equals("finish")) {
-            message = new MqttMessage(command.getBytes());
+            System.out.println("-------------------------------------------------");
+            System.out.println("Publishing on topic: " + topic);
+            System.out.println("Message: " + command);
+            System.out.println("-------------------------------------------------");
+            
+            MqttMessage message = new MqttMessage(command.getBytes());
             message.setQos(qos);
             try {
                 myClient.publish(topic, message);
