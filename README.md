@@ -4,6 +4,8 @@
 ## Android app :iphone:
 Η Android εφαρμογή Cerebro αποτελείται από μία Main Activity που περιέχει κουμπιά on/off για την ενεργοποίηση του φακού και της ηχητικής ειδοποίησης, καθώς και ένα μενού που περιέχει επιλογές για: παραμετροποίηση της IP και του port μέσω των οποίων μπορεί να επικοινωνήσει με τον broker, παραμετροποίηση της συχνότητας με την οποία λαμβάνει εντολές και τέλος επιλογή εξόδου.
 
+![ui](/ui.png)
+
 Έπειτα από την εισαγωγή των IP και port δημιουργεί ένα αντικείμενο της κλάσης MqttClient προκειμένου να πραγματοποιήσει αμφίδρομη επικοινωνία με το java app. Πιο συγκεκριμένα δέχεται εντολές τύπου on/off και στέλνει την συχνότητα με την οποία επιθυμεί να λαμβάνει τις εντολές αυτές.
 
 Λόγω της αναγκαιότητας αμφίδρομης επικοινωνίας είναι απαραίτητος και ο συνεχής έλεγχος ύπαρξης σύνδεσης στο διαδίκτυο. Για τον σκοπό αυτό δημιουργήθηκαν τα αρχεία *ServiceManager.java* και *WifiReceiver.java*. Επίσης, προστέθηκαν τα απαραίτητα permissions:
@@ -32,16 +34,25 @@ else
     Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
 ```
 
-Έχουμε φροντίσει μετά το πάτημα του home button και την επαναφορά της εφαρμογής στο προσκήνιο η σύνδεση του android app με το java app να διατηρείται.
+Έχουμε φροντίσει μετά το κλείδωμα και άνοιγμα της συσκευής να επαναφέρουμε αυτόματα τη σύνδεση του android app με το java app, εκμεταλευόμενοι την συνάρτηση *onResume()* στο αρχείο *MainActivity.java*
+```java
+protected void onResume() {
+    super.onResume();
+    if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
+        startMqtt();
+}
+```
 
 ## Java app :computer:
 Η java εφαρμογή αποτελείται από ένα αρχείο που υπολογίζει την εντροπία των δεδομένων το οποίο και περιέχει την main της εφαρμογής, το αρχείο ProbabilityState που μας δίνεται, το αρχείο ΚΝΝalgorithm το οποίο υλοποιεί τον αλγόριθμο Knn και στέλνει τα αποτελέσματα στον buffer, τα αρχεία Consumer και Producer που περιέχουν τα συγχρονισμένα thread και τον buffer και τέλος το αρχείο MQTTclient που περιέχει τον client και τα απαραίτητα για την υλοποίηση του.
-![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/sort_verification.JPG)
+
+![sort_verification](/sort_verification.JPG)
 
 Ξεκινάμε την εφαρμογή τρέχοντας την Entropy.java, η οποία στέλνει και δέχεται δεδομένα απο την ProbabilityState και δημιουργεί μια κλάση KNNalgorithm, στην οποία αρχικοποιούμε τον MQTTclient και τους producer, consumer.
 
 Από τα δεδομένα αφαιρούμε εκείνα των οποίων οι αισθητήρες είχαν QoS κάτω απο 4, έτσι πετυχαίνουμε efficiency 73.4% με κ=7.
-![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/efficiency.JPG)
+
+![efficiency](/efficiency.JPG)
 
 Όταν όλα τα δεδομένα έχουν σταλθεί στον buffer μέσω της ΚΝΝ στέλνουμε ένα τελικό μήνυμα στον buffer "finish", το οποίο όταν σταλθεί στον client κάνει disconnect.
 
