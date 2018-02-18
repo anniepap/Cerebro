@@ -52,12 +52,13 @@ protected void onResume() {
 
 
 ## Επικοινωνία :speech_balloon:
-Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή. Συγκεκριμένα, οι εντολές που δέχεται από το πληκτρολόγιο το java app είναι:
+Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή. Συγκεκριμένα, οι εντολές που παράγει το java app είναι:
 ```
 turn On
 turn Off
-quit
+finish
 ```
+Όπου με την εντολή finish τερματίζουν τα thread των producer, consumer και σταματά η επικοινωνία με την android εφαρμογή.
 
 ## Build :hammer:
 Για το build και του android app καθώς και του java app χρησιμοποιήθηκε το gradle, με σκοπό να εξασφαλίσουμε ότι το κατέβασμα των απαραίτητων βιβλιοθηκών του ΜQTT θα γίνεται αυτόματα. Συγκεκριμένα, το κατέβασμα γίνετα χάρη στα αρχεία *build.gradle(Module: app)* και *build.gradle(Module: java_app)* στο android και java app αντιστοίχως. Παρακάτω φαίνεται η πηγή των dependencies, το maven, καθώς και συγκεκριμένα οι εκδόσεις που χρησημοποιήθηκαν.
@@ -84,9 +85,5 @@ dependencies {
 Μπόκος Δημήτρης 
 
 Παπαχρήστου Άννα
-
-## Σημειώσεις - μην ξεχάσουμε
-2. τι χρησιμοποιήθηκε (intellij, android studio, paho κλπ)
-3. ενδεικτικός κώδικας/εικόνες εκτέλεσης
 
 
