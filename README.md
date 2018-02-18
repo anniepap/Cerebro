@@ -86,10 +86,13 @@ dependencies {
 Έπειτα εκτελούμε την java εφαρμογή, η οποία τώρα θα μπορεί να κάνει pubish στο topic commands τα αντίστοιχα μηνύματα για τις on/off εντολές, ενώ παράλληλα εγγράφεται και ως subcriber στο topic frequency. Έτσι η android εφαρμογή θα μπορεί πλέον να κάνει και publish τα αντίστοιχα μηνύματα για την αλλαγή της συχνότητας αποστολής των on/off εντολών.
 
 ## Δημιουργοί :mortar_board:
-Αδαμοπούλου Δέσποινα 
+[Αδαμοπούλου Δέσποινα
+(despadam)] (https://github.com/despadam)
 
-Μπόκος Δημήτρης 
+[Μπόκος Δημήτρης
+(Phoenixmirage)] (https://github.com/Phoenixmirage)
 
-Παπαχρήστου Άννα
+[Παπαχρήστου Άννα 
+(anniepap)] (https://github.com/anniepap)
 
 
