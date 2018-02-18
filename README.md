@@ -6,7 +6,32 @@
 
 Έπειτα από την εισαγωγή των IP και port δημιουργεί ένα αντικείμενο της κλάσης MqttClient προκειμένου να πραγματοποιήσει αμφίδρομη επικοινωνία με το java app. Πιο συγκεκριμένα δέχεται εντολές τύπου on/off και στέλνει την συχνότητα με την οποία επιθυμεί να λαμβάνει τις εντολές αυτές.
 
-// εισαγωγή επεξήγησης για background check σύνδεσης στο internet
+Λόγω της αναγκαιότητας αμφίδρομης επικοινωνίας είναι απαραίτητος και ο συνεχής έλεγχος ύπαρξης σύνδεσης στο διαδίκτυο. Για τον σκοπό αυτό δημιουργήθηκαν τα αρχεία *ServiceManager.java* και *WifiReceiver.java*. Επίσης, προστέθηκαν τα απαραίτητα permissions:
+```java
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+```
+Οπότε στο αρχείο *MainActivity.java* και πιο συγκεκριμένα στη συνάρτηση *onStart()* με την βοήθεια ενός handler και ενός registerReceiver, ζητάμε να μάθουμε την ύπαρξη σύνδεσης ανά 8s αφού έχουμε κατασκευάσει τον *wifiManager* στην *onCreate()*.
+```java
+final int delay = 8; // seconds
+wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+handler.postDelayed(new Runnable(){
+    public void run(){
+        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        wifiManager.startScan();
+        handler.postDelayed(this, delay * 1000);
+    }
+}, delay);
+```
+
+Έχουμε φροντίσει μετά το κλείδωμα και άνοιγμα της συσκευής να επαναφέρουμε αυτόματα τη σύνδεση του android app με το java app, εκμεταλευόμενοι την συνάρτηση *onResume()* στο αρχείο *MainActivity.java*
+```java
+protected void onResume() {
+    super.onResume();
+    if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
+        startMqtt();
+}
+```
 
 ## Java app :computer:
 Η java εφαρμογή αποτελείται από ένα αρχείο που υπολογίζει την εντροπία των δεδομένων το οποίο και περιέχει την main της εφαρμογής, το αρχείο ProbabilityState που μας δίνεται, το αρχείο ΚΝΝalgorithm το οποίο υλοποιεί τον αλγόριθμο Knn και στέλνει τα αποτελέσματα στον buffer, τα αρχεία Consumer και Producer που περιέχουν τα συγχρονισμένα thread και τον buffer και τέλος το αρχείο MQTTclient που περιέχει τον client και τα απαραίτητα για την υλοποίηση του.
@@ -19,7 +44,27 @@
 
 
 ## Επικοινωνία :speech_balloon:
-Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή.
+Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή. Συγκεκριμένα, οι εντολές που δέχεται από το πληκτρολόγιο το java app είναι:
+```
+turn On
+turn Off
+quit
+```
+
+## Build :hammer:
+Για το build και του android app καθώς και του java app χρησιμοποιήθηκε το gradle, με σκοπό να εξασφαλίσουμε ότι το κατέβασμα των απαραίτητων βιβλιοθηκών του ΜQTT θα γίνεται αυτόματα. Συγκεκριμένα, το κατέβασμα γίνετα χάρη στα αρχεία *build.gradle(Module: app)* και *build.gradle(Module: java_app)* στο android και java app αντιστοίχως. Παρακάτω φαίνεται η πηγή των dependencies, το maven, καθώς και συγκεκριμένα οι εκδόσεις που χρησημοποιήθηκαν.
+```groovy
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
+    }
+}
+dependencies {
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+    compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+}
+```
 
 ## Εκτέλεση :sound:
 Έχοντας ήδη ανοιχτό τον mosquitto broker, ανοίγουμε πρώτα την android εφαρμογή και φροντίζουμε το κινητό μας να είναι συνδεδεμένο στο ίδιο δίκτυο με τον υπολογιστή όπου θα εκτελεστεί η java εφαρμογή. Στη συνέχεια εισάγουμε μέσω της κατάλληλης επιλογής του μενού την IP και port 1883. Έτσι η εφαρμογή εγγράφεται ως subscriber στο topic commands.
@@ -33,7 +78,6 @@
 Παπαχρήστου Άννα
 
 ## Σημειώσεις - μην ξεχάσουμε
-1. gradle και στα δυο
 2. τι χρησιμοποιήθηκε (intellij, android studio, paho κλπ)
 3. ενδεικτικός κώδικας/εικόνες εκτέλεσης
 
