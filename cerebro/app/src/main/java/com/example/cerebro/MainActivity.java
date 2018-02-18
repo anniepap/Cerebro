@@ -3,6 +3,9 @@ package com.example.cerebro;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +49,16 @@ public class MainActivity extends AppCompatActivity {
     final Pattern ptn = Pattern.compile(regex);
     SharedPreferences.Editor editor;
 
+    ColorDrawable[] BackGroundColor = {
+            new ColorDrawable(Color.parseColor("#0F702C")),
+            new ColorDrawable(Color.parseColor("#303030")),
+    };
+    ColorDrawable[] BackGroundDefault = {
+            new ColorDrawable(Color.parseColor("#303030"))
+    };
+
+    TransitionDrawable transitiondrawable, defaultdrawable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +77,17 @@ public class MainActivity extends AppCompatActivity {
 
         final Button btnOn = findViewById(R.id.btnOn);
         final Button btnOff = findViewById(R.id.btnOff);
+        final LinearLayout background = findViewById(R.id.linearLayout);
+        transitiondrawable = new TransitionDrawable(BackGroundColor);
+        defaultdrawable = new TransitionDrawable(BackGroundDefault);
 
         btnOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 turnOnSound();
                 turnOnFlash();
+                background.setBackground(transitiondrawable);
+                transitiondrawable.startTransition(5000);
             }
         });
         btnOff.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 turnOffSound();
                 turnOffFlash();
+                background.setBackground(defaultdrawable);
             }
         });
 
@@ -84,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("IP", "");
         editor.putString("port", "");
         editor.apply();
+
     }
 
     private void startMqtt() {
@@ -153,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     turnOffFlash();
                 }
-            }, 5000);  // OSA EINAI KAI TO TUNE??
+            }, 5000);  // OSA EINAI KAI TO TUNE
         }
     }
 
@@ -231,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Log.i("RESUME", "onResume: ON RESUME");
         // Log.i ("SAVED IPport: ", IPport);
-        if (cl.isConnectedOnce)
+        if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
             startMqtt();
     }
 

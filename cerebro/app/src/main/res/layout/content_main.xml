@@ -9,33 +9,40 @@
     tools:showIn="@layout/activity_main">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_gravity="center"
         android:gravity="center_horizontal|center"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="121dp">
 
         <Button
             android:id="@+id/btnOn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_margin="30dp"
+            android:background="@drawable/buttonshape"
+            android:shadowColor="#232927"
             android:text="@string/on"
             android:textColor="@drawable/buttontext"
-            android:textSize="18sp"
-            android:layout_margin="15dp"
-            android:background="@drawable/buttonshape"
-            android:shadowColor="#232927" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btnOff"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_margin="30dp"
+            android:background="@drawable/buttonshapeoff"
+            android:shadowColor="#232927"
             android:text="@string/off"
             android:textColor="@drawable/buttontextoff"
-            android:textSize="18sp"
-            android:layout_margin="15dp"
-            android:background="@drawable/buttonshapeoff"
-            android:shadowColor="#232927" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
