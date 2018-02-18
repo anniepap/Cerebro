@@ -43,21 +43,24 @@ protected void onResume() {
 
 ## Java app :computer:
 Η java εφαρμογή αποτελείται από ένα αρχείο που υπολογίζει την εντροπία των δεδομένων το οποίο και περιέχει την main της εφαρμογής, το αρχείο ProbabilityState που μας δίνεται, το αρχείο ΚΝΝalgorithm το οποίο υλοποιεί τον αλγόριθμο Knn και στέλνει τα αποτελέσματα στον buffer, τα αρχεία Consumer και Producer που περιέχουν τα συγχρονισμένα thread και τον buffer και τέλος το αρχείο MQTTclient που περιέχει τον client και τα απαραίτητα για την υλοποίηση του.
+![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/sort_verification.JPG)
 
 Ξεκινάμε την εφαρμογή τρέχοντας την Entropy.java, η οποία στέλνει και δέχεται δεδομένα απο την ProbabilityState και δημιουργεί μια κλάση KNNalgorithm, στην οποία αρχικοποιούμε τον MQTTclient και τους producer, consumer.
 
 Από τα δεδομένα αφαιρούμε εκείνα των οποίων οι αισθητήρες είχαν QoS κάτω απο 4, έτσι πετυχαίνουμε efficiency 73.4% με κ=7.
+![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/efficiency.JPG)
 
 Όταν όλα τα δεδομένα έχουν σταλθεί στον buffer μέσω της ΚΝΝ στέλνουμε ένα τελικό μήνυμα στον buffer "finish", το οποίο όταν σταλθεί στον client κάνει disconnect.
 
 
 ## Επικοινωνία :speech_balloon:
-Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή. Συγκεκριμένα, οι εντολές που δέχεται από το πληκτρολόγιο το java app είναι:
+Για την επικοινωνία μεταξύ των δύο εφαρμογών έχουν χρησιμοποιηθεί οι αντίστοιχες Java και Android βιβλιοθήκες του MQTT, καθώς και ο mosquitto broker. Δημιουργούνται 2 topics, το commands στο οποίο είναι publisher η java εφαρμογή και το frequency στο οποίο κάνει publish η android εφαρμογή. Συγκεκριμένα, οι εντολές που παράγει το java app είναι:
 ```
 turn On
 turn Off
-quit
+finish
 ```
+Όπου με την εντολή finish τερματίζουν τα thread των producer, consumer και σταματά η επικοινωνία με την android εφαρμογή.
 
 ## Build :hammer:
 Για το build και του android app καθώς και του java app χρησιμοποιήθηκε το gradle, με σκοπό να εξασφαλίσουμε ότι το κατέβασμα των απαραίτητων βιβλιοθηκών του ΜQTT θα γίνεται αυτόματα. Συγκεκριμένα, το κατέβασμα γίνετα χάρη στα αρχεία *build.gradle(Module: app)* και *build.gradle(Module: java_app)* στο android και java app αντιστοίχως. Παρακάτω φαίνεται η πηγή των dependencies, το maven, καθώς και συγκεκριμένα οι εκδόσεις που χρησημοποιήθηκαν.
@@ -84,9 +87,5 @@ dependencies {
 Μπόκος Δημήτρης 
 
 Παπαχρήστου Άννα
-
-## Σημειώσεις - μην ξεχάσουμε
-2. τι χρησιμοποιήθηκε (intellij, android studio, paho κλπ)
-3. ενδεικτικός κώδικας/εικόνες εκτέλεσης
 
 
