@@ -1,5 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Vector;
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +28,20 @@ public class Entropy {
         String cvsSplitBy = ",";
         double entr;
 
-        File folder = new File("C:/Users/User/Desktop/Data Final for Software Development");
-        String trainingFile="C:/Users/User/Desktop/Training Set for Software Development/Training Set.csv";
+        Path path = null;
+        try {
+            path = Paths.get(Entropy.class.getResource(".").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        String DataFinal = path.getParent().getParent().getParent().getParent().getParent() + "\\Data Final for Software Development";
+        String trainingFile = path.getParent().getParent().getParent().getParent().getParent() + "\\Training Set for Software Development\\Training Set.csv";
+        System.out.println(DataFinal);
+
+        File folder = new File(DataFinal);
+        // File folder = new File("../../../Data Final for Software Development");
+        // String trainingFile="../../../Training Set for Software Development/Training Set.csv";
         File[] listOfFiles = folder.listFiles();
         cur_file=0;
         for (File file : listOfFiles){

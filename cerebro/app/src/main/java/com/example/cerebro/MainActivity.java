@@ -49,15 +49,17 @@ public class MainActivity extends AppCompatActivity {
     final Pattern ptn = Pattern.compile(regex);
     SharedPreferences.Editor editor;
 
-    ColorDrawable[] BackGroundColor = {
+    ColorDrawable[] BackGroundOn = {
             new ColorDrawable(Color.parseColor("#0F702C")),
             new ColorDrawable(Color.parseColor("#303030")),
     };
-    ColorDrawable[] BackGroundDefault = {
+    ColorDrawable[] BackGroundOff = {
+            new ColorDrawable(Color.parseColor("#841F13")),
             new ColorDrawable(Color.parseColor("#303030"))
     };
 
-    TransitionDrawable transitiondrawable, defaultdrawable;
+    TransitionDrawable transitiondrawableOn, transitiondrawableOff;
+    LinearLayout background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,17 +79,17 @@ public class MainActivity extends AppCompatActivity {
 
         final Button btnOn = findViewById(R.id.btnOn);
         final Button btnOff = findViewById(R.id.btnOff);
-        final LinearLayout background = findViewById(R.id.linearLayout);
-        transitiondrawable = new TransitionDrawable(BackGroundColor);
-        defaultdrawable = new TransitionDrawable(BackGroundDefault);
+        background = findViewById(R.id.linearLayout);
+        transitiondrawableOn = new TransitionDrawable(BackGroundOn);
+        transitiondrawableOff = new TransitionDrawable(BackGroundOff);
 
         btnOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 turnOnSound();
                 turnOnFlash();
-                background.setBackground(transitiondrawable);
-                transitiondrawable.startTransition(5000);
+                background.setBackground(transitiondrawableOn);
+                transitiondrawableOn.startTransition(5000);
             }
         });
         btnOff.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 turnOffSound();
                 turnOffFlash();
-                background.setBackground(defaultdrawable);
+                background.setBackground(transitiondrawableOff);
+                transitiondrawableOff.startTransition(1000);
             }
         });
 
@@ -114,9 +117,13 @@ public class MainActivity extends AppCompatActivity {
                 if (cl.getMessage_string().equals("turn On")) {
                     turnOnSound();
                     turnOnFlash();
+//                    background.setBackground(transitiondrawableOn);
+//                    transitiondrawableOn.startTransition(5000);
                 } else if (cl.getMessage_string().equals("turn Off")) {
                     turnOffSound();
                     turnOffFlash();
+//                    background.setBackground(transitiondrawableOff);
+//                    transitiondrawableOff.startTransition(1000);
                 }
             }
         });
@@ -146,12 +153,14 @@ public class MainActivity extends AppCompatActivity {
     // Turning off sound
     private void turnOffSound() {
         if (isSoundOn) {
-            mp.stop();
-            try {
-                mp.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // mp.stop();
+            mp.pause();
+            mp.seekTo(0);
+//            try {
+//                mp.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             isSoundOn = false;
         }
     }
@@ -212,6 +221,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (camera != null) {
+            camera.release();
+            camera = null;
+        }
     }
 
     @Override
@@ -222,8 +235,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Log.i("START", "onStart: ON START");
-        // on starting the app get the camera params
         getCamera();
 
         // on starting the app checks internet connection
@@ -242,22 +253,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // Log.i("PAUSE", "onPause: ON PAUSE");
-        turnOffFlash();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Log.i("RESUME", "onResume: ON RESUME");
-        // Log.i ("SAVED IPport: ", IPport);
         if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
             startMqtt();
     }
 
     @Override
     protected void onStop() {
-        Log.i("stop", "onStop: On STOP is called");
         cl.disconnect();
         super.onStop();
         if (this.isFinishing()) {
@@ -266,10 +272,6 @@ public class MainActivity extends AppCompatActivity {
         if (this.wifiReceiver != null) {
             unregisterReceiver(wifiReceiver);
             wifiReceiver = null;
-        }
-        if (camera != null) {
-            camera.release();
-            camera = null;
         }
     }
 

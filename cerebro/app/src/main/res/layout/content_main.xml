@@ -24,25 +24,25 @@
 
         <Button
             android:id="@+id/btnOn"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_margin="30dp"
             android:background="@drawable/buttonshape"
             android:shadowColor="#232927"
             android:text="@string/on"
             android:textColor="@drawable/buttontext"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btnOff"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_margin="30dp"
             android:background="@drawable/buttonshapeoff"
             android:shadowColor="#232927"
             android:text="@string/off"
             android:textColor="@drawable/buttontextoff"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
