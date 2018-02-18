@@ -43,10 +43,12 @@ protected void onResume() {
 
 ## Java app :computer:
 Η java εφαρμογή αποτελείται από ένα αρχείο που υπολογίζει την εντροπία των δεδομένων το οποίο και περιέχει την main της εφαρμογής, το αρχείο ProbabilityState που μας δίνεται, το αρχείο ΚΝΝalgorithm το οποίο υλοποιεί τον αλγόριθμο Knn και στέλνει τα αποτελέσματα στον buffer, τα αρχεία Consumer και Producer που περιέχουν τα συγχρονισμένα thread και τον buffer και τέλος το αρχείο MQTTclient που περιέχει τον client και τα απαραίτητα για την υλοποίηση του.
+![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/sort_verification.JPG)
 
 Ξεκινάμε την εφαρμογή τρέχοντας την Entropy.java, η οποία στέλνει και δέχεται δεδομένα απο την ProbabilityState και δημιουργεί μια κλάση KNNalgorithm, στην οποία αρχικοποιούμε τον MQTTclient και τους producer, consumer.
 
 Από τα δεδομένα αφαιρούμε εκείνα των οποίων οι αισθητήρες είχαν QoS κάτω απο 4, έτσι πετυχαίνουμε efficiency 73.4% με κ=7.
+![alt text](https://anapgit.scanlab.gr/anniepap/cerebro/blob/master/efficiency.JPG)
 
 Όταν όλα τα δεδομένα έχουν σταλθεί στον buffer μέσω της ΚΝΝ στέλνουμε ένα τελικό μήνυμα στον buffer "finish", το οποίο όταν σταλθεί στον client κάνει disconnect.
 
