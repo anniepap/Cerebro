@@ -27,7 +27,6 @@ import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.util.Log;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.media.MediaPlayer;
@@ -83,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         transitiondrawableOn = new TransitionDrawable(BackGroundOn);
         transitiondrawableOff = new TransitionDrawable(BackGroundOff);
 
+        // Setting up listeners for the on/off buttons
         btnOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,13 +102,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Preferences to save the user input for IP and port
         editor = getSharedPreferences("IPport", MODE_PRIVATE).edit();
         editor.putString("IP", "");
         editor.putString("port", "");
         editor.apply();
-
     }
 
+    // Starting the mqtt connection and setting up a listener for the incoming messages
     private void startMqtt() {
         cl.runClient();
         cl.setListener(new MQTTclient.ChangeListener() {
@@ -153,14 +154,8 @@ public class MainActivity extends AppCompatActivity {
     // Turning off sound
     private void turnOffSound() {
         if (isSoundOn) {
-            // mp.stop();
             mp.pause();
             mp.seekTo(0);
-//            try {
-//                mp.prepare();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             isSoundOn = false;
         }
     }
@@ -182,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     turnOffFlash();
                 }
-            }, 5000);  // OSA EINAI KAI TO TUNE
+            }, 5000);  // keep the flashlight on while the sound is on
         }
     }
 
@@ -200,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // alert the user that the app is about to exit
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -218,9 +214,12 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // mqtt disconnects, sound stops and the camera is released
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        cl.disconnect();
+        mp.stop();
         if (camera != null) {
             camera.release();
             camera = null;
@@ -258,17 +257,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
-            startMqtt();
     }
 
     @Override
     protected void onStop() {
-        cl.disconnect();
         super.onStop();
-        if (this.isFinishing()) {
-            turnOffSound();
-        }
         if (this.wifiReceiver != null) {
             unregisterReceiver(wifiReceiver);
             wifiReceiver = null;
@@ -284,11 +277,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        // IP and port input
         if (id == R.id.action_settings) {
             SharedPreferences prefs = getSharedPreferences("IPport", MODE_PRIVATE);
             String IPpref = prefs.getString("IP", "No IP defined");
@@ -310,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
             final EditText port = view.findViewById(R.id.port);
             port.setText(portPref);
 
+            // mqtt connects if the input is correct
             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Matcher mtch = ptn.matcher(IP.getText().toString());
@@ -318,7 +310,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("IPportInput", IPport);
                         cl.setIPport(IPport);
                         startMqtt();
-                        cl.isConnectedOnce = true;
 
                         editor = getSharedPreferences("IPport", MODE_PRIVATE).edit();
                         editor.putString("IP", IP.getText().toString());
@@ -338,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
         }
 
+        // frequency input, choose between 1 and 10 and send message to java app
         if (id == R.id.action_frequency) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Set Frequency");
@@ -374,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
         }
 
+        // exit app
         if (id == R.id.action_exit) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);

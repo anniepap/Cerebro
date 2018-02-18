@@ -15,7 +15,6 @@ public class MQTTclient implements MqttCallback {
     private String message_string = "";
     private ChangeListener listener;
     private String IPport = "tcp://10.0.2.2:1883";      //for the emulator
-    public boolean isConnectedOnce = false;
 
     public void runClient() {
         MemoryPersistence persistence = new MemoryPersistence();
@@ -68,8 +67,8 @@ public class MQTTclient implements MqttCallback {
 
     @Override
     public void connectionLost(Throwable cause) {
-        System.out.println("ERROR!!!!! " + cause.getCause());
-        System.out.println("Connection lost!");
+        Log.i("ERROR!!!", cause.getCause().toString());
+        Log.i("Mqtt Client", "Connection lost!");
     }
 
     @Override

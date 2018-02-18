@@ -32,14 +32,7 @@ else
     Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
 ```
 
-Έχουμε φροντίσει μετά το κλείδωμα και άνοιγμα της συσκευής να επαναφέρουμε αυτόματα τη σύνδεση του android app με το java app, εκμεταλευόμενοι την συνάρτηση *onResume()* στο αρχείο *MainActivity.java*
-```java
-protected void onResume() {
-    super.onResume();
-    if (cl.isConnectedOnce) // start only if it was started once in the past to avoid slow start up.
-        startMqtt();
-}
-```
+Έχουμε φροντίσει μετά το πάτημα του home button και την επαναφορά της εφαρμογής στο προσκήνιο η σύνδεση του android app με το java app να διατηρείται.
 
 ## Java app :computer:
 Η java εφαρμογή αποτελείται από ένα αρχείο που υπολογίζει την εντροπία των δεδομένων το οποίο και περιέχει την main της εφαρμογής, το αρχείο ProbabilityState που μας δίνεται, το αρχείο ΚΝΝalgorithm το οποίο υλοποιεί τον αλγόριθμο Knn και στέλνει τα αποτελέσματα στον buffer, τα αρχεία Consumer και Producer που περιέχουν τα συγχρονισμένα thread και τον buffer και τέλος το αρχείο MQTTclient που περιέχει τον client και τα απαραίτητα για την υλοποίηση του.
