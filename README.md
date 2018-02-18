@@ -24,6 +24,14 @@ handler.postDelayed(new Runnable(){
 }, delay);
 ```
 
+Για να επιβεβαιώσουμε ότι όντως ελέγχεται η σύνδεση ανά 8s, προβάλλουμε ένα Toast κάθε φορά που ελέγχεται δηλαδή στην *onReceive()* με μήνυμα που δείχνει ότι υπάρχει ή δεν υπάρχει σύνδεση μέχρι τη τρέχουσα στιγμή.
+```java
+if(serviceManager.isNetworkAvailable())
+    Toast.makeText(context, "Network Available", Toast.LENGTH_SHORT).show();
+else
+    Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
+```
+
 Έχουμε φροντίσει μετά το κλείδωμα και άνοιγμα της συσκευής να επαναφέρουμε αυτόματα τη σύνδεση του android app με το java app, εκμεταλευόμενοι την συνάρτηση *onResume()* στο αρχείο *MainActivity.java*
 ```java
 protected void onResume() {
